@@ -4,32 +4,6 @@ node n0 {
 	hostname pc1
 	!
 	interface eth0
-	 ip address 10.0.4.20/24
-	 ipv6 address fc00:4::20/64
-	 mac address 42:00:aa:00:00:09
-	!
-	interface lo0
-	 type lo
-	 ip address 127.0.0.1/8
-	 ipv6 address ::1/128
-	!
-	ip route 0.0.0.0/0 10.0.4.1
-	!
-	ipv6 route ::/0 fc00:4::1
-	!
-    }
-    canvas c0
-    iconcoords {72 72}
-    labelcoords {72 103}
-    interface-peer {eth0 n4}
-}
-
-node n1 {
-    type pc
-    network-config {
-	hostname pc2
-	!
-	interface eth0
 	 ip address 10.0.1.20/24
 	 ipv6 address fc00:1::20/64
 	 mac address 42:00:aa:00:00:03
@@ -45,8 +19,34 @@ node n1 {
 	!
     }
     canvas c0
-    iconcoords {768 48}
-    labelcoords {768 79}
+    iconcoords {72 456}
+    labelcoords {72 487}
+    interface-peer {eth0 n4}
+}
+
+node n1 {
+    type pc
+    network-config {
+	hostname pc2
+	!
+	interface eth0
+	 ip address 10.0.2.20/24
+	 ipv6 address fc00:2::20/64
+	 mac address 42:00:aa:00:00:05
+	!
+	interface lo0
+	 type lo
+	 ip address 127.0.0.1/8
+	 ipv6 address ::1/128
+	!
+	ip route 0.0.0.0/0 10.0.2.1
+	!
+	ipv6 route ::/0 fc00:2::1
+	!
+    }
+    canvas c0
+    iconcoords {744 456}
+    labelcoords {744 487}
     interface-peer {eth0 n5}
 }
 
@@ -71,8 +71,8 @@ node n2 {
 	!
     }
     canvas c0
-    iconcoords {72 528}
-    labelcoords {72 559}
+    iconcoords {72 72}
+    labelcoords {72 103}
     interface-peer {eth0 n4}
 }
 
@@ -82,23 +82,23 @@ node n3 {
 	hostname pc4
 	!
 	interface eth0
-	 ip address 10.0.2.20/24
-	 ipv6 address fc00:2::20/64
-	 mac address 42:00:aa:00:00:05
+	 ip address 10.0.4.20/24
+	 ipv6 address fc00:4::20/64
+	 mac address 42:00:aa:00:00:09
 	!
 	interface lo0
 	 type lo
 	 ip address 127.0.0.1/8
 	 ipv6 address ::1/128
 	!
-	ip route 0.0.0.0/0 10.0.2.1
+	ip route 0.0.0.0/0 10.0.4.1
 	!
-	ipv6 route ::/0 fc00:2::1
+	ipv6 route ::/0 fc00:4::1
 	!
     }
     canvas c0
-    iconcoords {768 504}
-    labelcoords {768 535}
+    iconcoords {744 72}
+    labelcoords {744 103}
     interface-peer {eth0 n5}
 }
 
@@ -109,56 +109,9 @@ node n4 {
 	hostname router1
 	!
 	interface eth2
-	 ip address 10.0.4.1/24
-	 ipv6 address fc00:4::1/64
-	 mac address 42:00:aa:00:00:08
-	!
-	interface eth1
 	 ip address 10.0.3.1/24
 	 ipv6 address fc00:3::1/64
 	 mac address 42:00:aa:00:00:06
-	!
-	interface eth0
-	 ip address 10.0.0.2/24
-	 ipv6 address fc00::2/64
-	 mac address 42:00:aa:00:00:01
-	!
-	interface lo0
-	 type lo
-	 ip address 127.0.0.1/8
-	 ipv6 address ::1/128
-	!
-	router rip
-	 redistribute static
-	 redistribute connected
-	 redistribute ospf
-	 network 0.0.0.0/0
-	!
-	router ripng
-	 redistribute static
-	 redistribute connected
-	 redistribute ospf6
-	 network ::/0
-	!
-    }
-    canvas c0
-    iconcoords {264 264}
-    labelcoords {264 289}
-    interface-peer {eth0 n5}
-    interface-peer {eth1 n2}
-    interface-peer {eth2 n0}
-}
-
-node n5 {
-    type router
-    model quagga
-    network-config {
-	hostname router2
-	!
-	interface eth2
-	 ip address 10.0.2.1/24
-	 ipv6 address fc00:2::1/64
-	 mac address 42:00:aa:00:00:04
 	!
 	interface eth1
 	 ip address 10.0.1.1/24
@@ -189,25 +142,72 @@ node n5 {
 	!
     }
     canvas c0
-    iconcoords {504 264}
-    labelcoords {504 289}
+    iconcoords {288 264}
+    labelcoords {288 289}
+    interface-peer {eth0 n5}
+    interface-peer {eth1 n0}
+    interface-peer {eth2 n2}
+}
+
+node n5 {
+    type router
+    model quagga
+    network-config {
+	hostname router2
+	!
+	interface eth2
+	 ip address 10.0.4.1/24
+	 ipv6 address fc00:4::1/64
+	 mac address 42:00:aa:00:00:08
+	!
+	interface eth1
+	 ip address 10.0.2.1/24
+	 ipv6 address fc00:2::1/64
+	 mac address 42:00:aa:00:00:04
+	!
+	interface eth0
+	 ip address 10.0.0.2/24
+	 ipv6 address fc00::2/64
+	 mac address 42:00:aa:00:00:01
+	!
+	interface lo0
+	 type lo
+	 ip address 127.0.0.1/8
+	 ipv6 address ::1/128
+	!
+	router rip
+	 redistribute static
+	 redistribute connected
+	 redistribute ospf
+	 network 0.0.0.0/0
+	!
+	router ripng
+	 redistribute static
+	 redistribute connected
+	 redistribute ospf6
+	 network ::/0
+	!
+    }
+    canvas c0
+    iconcoords {528 264}
+    labelcoords {528 289}
     interface-peer {eth0 n4}
     interface-peer {eth1 n1}
     interface-peer {eth2 n3}
 }
 
 link l0 {
-    nodes {n5 n4}
+    nodes {n4 n5}
     bandwidth 0
 }
 
 link l1 {
-    nodes {n1 n5}
+    nodes {n0 n4}
     bandwidth 0
 }
 
 link l2 {
-    nodes {n3 n5}
+    nodes {n1 n5}
     bandwidth 0
 }
 
@@ -217,7 +217,7 @@ link l3 {
 }
 
 link l4 {
-    nodes {n0 n4}
+    nodes {n3 n5}
     bandwidth 0
 }
 
@@ -228,7 +228,7 @@ canvas c0 {
 option show {
     interface_names yes
     ip_addresses yes
-    ipv6_addresses yes
+    ipv6_addresses no
     node_labels yes
     link_labels yes
     background_images no

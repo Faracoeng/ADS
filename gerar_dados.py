@@ -59,4 +59,3 @@ for proto in alg:
                 file.write(line.decode())  # Decodifica bytes para string e escreve no arquivo
 
         iperf_process.wait()  # Aguarda a conclusão do processo
-
