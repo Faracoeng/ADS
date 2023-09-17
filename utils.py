@@ -1,6 +1,30 @@
 import random
 import string
+import logging
 from subprocess import CompletedProcess, CalledProcessError, run, PIPE
+from logging.handlers import RotatingFileHandler
+
+# Configurar o logger
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
+# Criar um manipulador para escrever em arquivo com rotação
+file_handler = RotatingFileHandler('logs/log.txt', maxBytes=512)
+file_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(file_formatter)
+file_handler.setLevel(logging.DEBUG)
+
+console_handler = logging.StreamHandler()
+console_formatter = logging.Formatter('%(levelname)s - %(message)s')
+console_handler.setFormatter(console_formatter)
+console_handler.setLevel(logging.INFO)  # Defina o nível de log para INFO
+
+# Adicionar o manipulador de arquivo ao logger
+logger.addHandler(file_handler)
+
+# Adicionar o manipulador da saída padrão (console) apenas para mensagens INFO e superiores
+logger.addHandler(console_handler)
+
 
 # Função para criar identificador formado por uma cadeia de caracteres
 def gera_id(qtd_digitos: int = 5) -> str:
@@ -18,19 +42,56 @@ def gera_id(qtd_digitos: int = 5) -> str:
     return cadeia_aleatoria
 
 # Função para executar um comando e capturar a saída
-def executa_comando(cmd: str) -> CompletedProcess:
+def executa_comando(cmd: str, result: CompletedProcess = None, key: str = None):
     """
     Executa um comando no shell e retorna o resultado como um objeto CompletedProcess.
 
     Args:
         cmd (str): O comando a ser executado.
-
-    Returns:
-        CompletedProcess: Um objeto que contém informações sobre a execução do comando.
+        result (CompletedProcess): Um objeto que contém informações sobre a execução do comando.
     """
     try:
-        print(f"Executando comando = {cmd}\n")
-        resultado = run(cmd, shell=True, check=True, text=True, stdout=PIPE, stderr=PIPE)
-        return resultado
+        logger.debug(f"Executando comando = {cmd}")
+        process = run(cmd, shell=True, check=True, text=True, stdout=PIPE, stderr=PIPE)
+        if result is not None:
+            result[key] = process
     except CalledProcessError as error:
         raise Exception(error)
+
+# Função para escrever resultados dos comandos no arquivo
+def escreve_resultado(tag: str, resultados: dict):
+    """
+    Executa a escrita do resultados do cliente e servidor em dois arquivos
+
+    Args:
+        tag (str): Identificador do experimento
+        resultados (dict): Dicionário de objetos (CompletedProcess) com resultados da execução do comando
+    """
+    try:
+        logger.debug(f"Escrevendo resultados nos arquivos")
+        cli_file = f"resultados/cli-data.csv"
+        srv_file = f"resultados/srv-data.csv"
+        res_cli = resultados['cli-tcp'].stdout
+        res_srv = resultados['srv-tcp'].stdout
+        # FIXME Algumas vezes o resultado do client = "connect failed: Network is unreachable"
+        # Verificar como tratar isso.
+        logger.debug(f"dados-cliente={res_cli}")
+        logger.debug(f"dados-servidor={res_srv}")
+        write_line_in_file(cli_file, f"{tag},{get_last_line(res_cli)}")
+        write_line_in_file(srv_file, f"{tag},{get_last_line(res_srv)}")
+
+    except CalledProcessError as error:
+        logger.error(error)
+        raise Exception(error)
+
+def get_last_line(text:str) -> str:
+    if '\n' in text:
+        linhas = text.splitlines()
+        return f"{linhas[-1]}"
+    else:
+        return f"{text}"
+
+def write_line_in_file(file_name:str, line:str, mode:str = 'a'):
+    with open(file_name, mode) as file:
+        file.write(f"{line}\n")
+        file.close()
