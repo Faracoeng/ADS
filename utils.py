@@ -1,6 +1,6 @@
 import random
 import string
-import logging
+import logging, os
 from subprocess import CompletedProcess, CalledProcessError, run, PIPE
 from logging.handlers import RotatingFileHandler
 
@@ -84,14 +84,18 @@ def escreve_resultado(tag: str, resultados: dict):
         logger.error(error)
         raise Exception(error)
 
-def get_last_line(text:str) -> str:
+def get_last_line(text: str) -> str:
     if '\n' in text:
         linhas = text.splitlines()
         return f"{linhas[-1]}"
     else:
         return f"{text}"
 
-def write_line_in_file(file_name:str, line:str, mode:str = 'a'):
-    with open(file_name, mode) as file:
+def write_line_in_file(file_name: str, line: str):
+    with open(file_name, 'a') as file:
         file.write(f"{line}\n")
+        file.close()
+
+def create_file(file_name: str):
+    with open(file_name, 'w') as file:
         file.close()

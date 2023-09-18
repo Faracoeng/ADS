@@ -36,25 +36,27 @@ router2 = Node("router2", {"eth0":f"10.0.0.2", "eth1":f"10.0.2.1"," eth2":f"10.0
 link_routers = Link(router1, router2, "eth0", "eth0")
 
 # Fatores
-alg = ['cubic', 'reno']
-BER = ['100000', '10000000']
-background = ['400m', '800m']
-num_rep = 1 # FIXME configurar número de repetições
-time_tx = 20 # TODO verificar se o tempo será 60s
+fatores = {}
+fatores['alg'] = ['cubic', 'reno']
+fatores['ber'] = ['100000', '10000000']
+fatores['bg'] = ['400m', '800m']
+
+
+num_rep = 8 # FIXME configurar número de repetições
+time_tx = 5 # TODO verificar se o tempo será 60s
 t_sleep = 2 # tempo para aguardar entre threads
+i_report = 5
 
 # FIXME Alterei os comandos para utilizar nova estrutura de Node e Link acima.
 # Também inclui o código em uma função para ser chamado do manager
 
-column_names = ['num_rep','alg','ber','trafego_udp','timestamp','ip_fonte','porta_fonte', 'ip_destino', 'porta_destino', 'protocolo', 'intervalo_medicao', 'id_tx', 'tx_bps']
-
 def executa_experimento(imn_id: str):
-    utils.write_line_in_file('resultados/cli-data.csv', ",".join(column_names), 'w')
-    utils.write_line_in_file('resultados/srv-data.csv', ",".join(column_names), 'w')
+    utils.create_file('resultados/cli-data.csv')
+    utils.create_file('resultados/srv-data.csv')
     for rep in range(num_rep):
-        for proto in alg:
-            for ber in BER:
-                for trafego_udp in background:
+        for proto in fatores['alg']:
+            for ber in fatores['ber']:
+                for trafego_udp in fatores['bg']:
                 
                     # Comandos iperf/imunes 
                     cmd_vlink = f"sudo vlink -B {ber} {link_routers.name}@{imn_id}"
@@ -66,7 +68,7 @@ def executa_experimento(imn_id: str):
                     cmd_srv_tcp = f"sudo himage {pc2.name}@{imn_id} iperf -s -e -y C -Z {proto} -t {time_tx + (2*t_sleep)}"
                     cmd_cli_tcp = f"sudo himage {pc1.name}@{imn_id} iperf -c {pc2.interfaces['eth0']} -e -y C -t {time_tx + (1*t_sleep)} -Z {proto} "
                     
-                    tag_experimento = f"{rep},{proto},{ber},{trafego_udp}"
+                    tag_experimento = f"{proto}-{ber}-{trafego_udp}"
                     comandos = {
                         'vlink': cmd_vlink,
                         'srv-udp': cmd_srv_bg,
@@ -78,7 +80,7 @@ def executa_experimento(imn_id: str):
                     # Criar uma thread para cada comando e iniciar a execução com um atraso de 1 segundo
                     threads = []
                     resultados = {}
-                    utils.logger.info(f"Iniciando experimento = {tag_experimento}")
+                    utils.logger.info(f"Iniciando experimento => repetição:{rep} - tag:{tag_experimento}")
                     try:
                         for key,cmd in comandos.items():
                             thread = threading.Thread(target=utils.executa_comando, args=(cmd, resultados, key))
