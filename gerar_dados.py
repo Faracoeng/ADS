@@ -38,11 +38,11 @@ link_routers = Link(router1, router2, "eth0", "eth0")
 # Fatores
 fatores = {}
 fatores['alg'] = ['cubic', 'reno']
-fatores['ber'] = ['100000', '10000000']
+fatores['ber'] = ['100000', '1000000']
 fatores['bg'] = ['400m', '800m']
 
 
-num_rep = 8 # FIXME configurar número de repetições
+num_rep = 4 # FIXME configurar número de repetições
 time_tx = 5 # TODO verificar se o tempo será 60s
 t_sleep = 2 # tempo para aguardar entre threads
 i_report = 5

@@ -40,7 +40,9 @@ def remove_cenarios():
         utils.logger.error(f"A remoção do cenário falhou com o seguinte erro:\n{error}")
         sys.exit(1)
 
+#TODO alterar para aceitar opções via argumentos (argparser)
 if __name__ == "__main__":
     remove_cenarios()
     id_cenario = inicia_cenario()
     gd.executa_experimento(id_cenario)
+    #analisar_dados
