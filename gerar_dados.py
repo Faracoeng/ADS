@@ -42,8 +42,8 @@ fatores['ber'] = ['100000', '1000000']
 fatores['bg'] = ['400m', '800m']
 
 
-num_rep = 4 # FIXME configurar número de repetições
-time_tx = 5 # TODO verificar se o tempo será 60s
+num_rep = 8 # FIXME configurar número de repetições
+time_tx = 10*60 # TODO verificar se o tempo será 60s
 t_sleep = 2 # tempo para aguardar entre threads
 i_report = 5
 
@@ -66,7 +66,7 @@ def executa_experimento(imn_id: str):
                     # cmd_cli_tcp = f"sudo himage {pc1}@{imn_id} iperf -y -e -y C -c {pc2.interfaces['eth0']} -t {time_tx} -Z {proto} >> cli-data.csv"
 
                     cmd_srv_tcp = f"sudo himage {pc2.name}@{imn_id} iperf -s -e -y C -Z {proto} -t {time_tx + (2*t_sleep)}"
-                    cmd_cli_tcp = f"sudo himage {pc1.name}@{imn_id} iperf -c {pc2.interfaces['eth0']} -e -y C -t {time_tx + (1*t_sleep)} -Z {proto} "
+                    cmd_cli_tcp = f"sudo himage {pc1.name}@{imn_id} iperf -c {pc2.interfaces['eth0']} -e -y C -t {time_tx + (1*t_sleep)} -Z {proto}"
                     
                     tag_experimento = f"{proto}-{ber}-{trafego_udp}"
                     comandos = {
