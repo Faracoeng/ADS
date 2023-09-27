@@ -225,3 +225,7 @@ pip-selfcheck.json
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,python,venv,virtualenv,visualstudiocode
 logs/*.txt
+resultados/temporarios/*.csv
+resultados/finais/*.csv
+graficos/*
+!graficos/relatorio-final

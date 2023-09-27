@@ -1,5 +1,4 @@
-import utils
-import sys
+import utils, argparse, sys
 import gerar_dados as gd
 
 # Função para iniciar um cenário
@@ -40,9 +39,19 @@ def remove_cenarios():
         utils.logger.error(f"A remoção do cenário falhou com o seguinte erro:\n{error}")
         sys.exit(1)
 
-#TODO alterar para aceitar opções via argumentos (argparser)
-if __name__ == "__main__":
+if __name__ == "__main__":    
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, description="Executar experimento com cenário padrão.")
+    parser.add_argument("-t", type=int, help="Tempo de transmissão em segundos", default=2)
+    parser.add_argument("-n", type=int, help="Número de repetições", default=8)
+    args = parser.parse_args()
+
+    time_tx = args.t
+    num_rep = args.n
+
+    utils.logger.info(f"Cenário será executado com parâmetros:\nTempo de tx = {time_tx} min.\nNúmero de repetições = {num_rep}.\n")
+
     remove_cenarios()
     id_cenario = inicia_cenario()
-    gd.executa_experimento(id_cenario)
-    #analisar_dados
+    
+    # Chame a função para executar o experimento com os argumentos fornecidos
+    gd.executa_experimento(id_cenario, time_tx, num_rep)

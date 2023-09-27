@@ -34,7 +34,7 @@ Antes de executar este código, certifique-se de que você tenha instalado no SO
 
 3. **Executando análise dos dados**
    ```bash
-   python3 analisar_dados.py
+   python3 analisar_dados.py <arquivo.csv>
    ```
    
 4. **Visualização de logs**

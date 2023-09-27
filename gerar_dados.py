@@ -1,5 +1,7 @@
 import utils
 import threading, time, os
+import shutil
+from datetime import datetime
 
 #### TODO O código a seguir só funciona para o cenário incluído em ads-cenario.imn
 class Node:
@@ -41,18 +43,20 @@ fatores['alg'] = ['cubic', 'reno']
 fatores['ber'] = ['100000', '1000000']
 fatores['bg'] = ['400m', '800m']
 
+def executa_experimento(imn_id: str, qtd_min: int, num_rep: int):
+    time_tx = qtd_min*60 # o tempo no iperf (-t) é  em segundos
+    t_sleep = 2 # tempo para aguardar entre threads
+    dur_aprox = (time_tx + 4*t_sleep)/60 # em minutos (para log)
 
-num_rep = 8 # FIXME configurar número de repetições
-time_tx = 10*60 # TODO verificar se o tempo será 60s
-t_sleep = 2 # tempo para aguardar entre threads
-i_report = 5
+    # Nomes dos arquivos temporarios
 
-# FIXME Alterei os comandos para utilizar nova estrutura de Node e Link acima.
-# Também inclui o código em uma função para ser chamado do manager
+    data_atual = datetime.now().strftime("%Y-%m-%d")
+    temp_file_srv = f"resultados/temporarios/{data_atual}-srv-data.csv"
+    temp_file_cli = f"resultados/temporarios/{data_atual}-cli-data.csv"
+    utils.create_file(temp_file_cli)
+    utils.create_file(temp_file_srv)
 
-def executa_experimento(imn_id: str):
-    utils.create_file('resultados/cli-data.csv')
-    utils.create_file('resultados/srv-data.csv')
+    # Loop para executar os experimentos de acordo com o cenário previsto
     for rep in range(num_rep):
         for proto in fatores['alg']:
             for ber in fatores['ber']:
@@ -60,15 +64,16 @@ def executa_experimento(imn_id: str):
                 
                     # Comandos iperf/imunes 
                     cmd_vlink = f"sudo vlink -B {ber} {link_routers.name}@{imn_id}"
+                    
                     cmd_srv_bg = f"sudo himage {pc4.name}@{imn_id} iperf -s -u -t {time_tx + (4*t_sleep)}"
                     cmd_cli_bg = f"sudo himage {pc3.name}@{imn_id} iperf -c {pc4.interfaces['eth0']} -u -t {time_tx + (3*t_sleep)} -b {trafego_udp}"
-                    # cmd_srv_tcp = f"sudo himage {pc2}@{imn_id} iperf -s -e -y C -Z {proto} -t {time_tx} >> srv-data.csv"
-                    # cmd_cli_tcp = f"sudo himage {pc1}@{imn_id} iperf -y -e -y C -c {pc2.interfaces['eth0']} -t {time_tx} -Z {proto} >> cli-data.csv"
-
+                
                     cmd_srv_tcp = f"sudo himage {pc2.name}@{imn_id} iperf -s -e -y C -Z {proto} -t {time_tx + (2*t_sleep)}"
                     cmd_cli_tcp = f"sudo himage {pc1.name}@{imn_id} iperf -c {pc2.interfaces['eth0']} -e -y C -t {time_tx + (1*t_sleep)} -Z {proto}"
                     
-                    tag_experimento = f"{proto}-{ber}-{trafego_udp}"
+                    # identificador de cada experimento
+                    tag_experimento = f"{proto}-ber={ber}-udp={trafego_udp}"
+                    
                     comandos = {
                         'vlink': cmd_vlink,
                         'srv-udp': cmd_srv_bg,
@@ -77,16 +82,18 @@ def executa_experimento(imn_id: str):
                         'cli-tcp': cmd_cli_tcp
                     }
 
-                    # Criar uma thread para cada comando e iniciar a execução com um atraso de 1 segundo
+                    # Criar uma thread para cada comando
                     threads = []
                     resultados = {}
-                    utils.logger.info(f"Iniciando experimento => repetição:{rep} - tag:{tag_experimento}")
+                    utils.logger.info(f"Executando experimento => repetição:{rep+1} - tag:{tag_experimento}")
+                    utils.logger.info(f"Tempo aproximado de execução = {dur_aprox:.2f} minutos")
+
                     try:
                         for key,cmd in comandos.items():
                             thread = threading.Thread(target=utils.executa_comando, args=(cmd, resultados, key))
                             threads.append(thread)
                             thread.start()
-                            time.sleep(t_sleep)  # tempo para servidores estarem disponíveis
+                            time.sleep(t_sleep)  # tempo entre comandos para servidores estarem disponíveis
 
                         # Esperar todas as threads terminarem
                         for thread in threads:
@@ -95,8 +102,18 @@ def executa_experimento(imn_id: str):
                         utils.logger.error(e)
                     
                     utils.logger.info(f"Experimento Finalizado")
-                    # print(resultados['srv'])
-                    utils.escreve_resultado(tag_experimento, resultados)                
-                    time.sleep(5)
-                    os.system("reset")
+
+                    # Escrever resultados nos arquivos temporários
+                    utils.escreve_resultado(tag_experimento, resultados, [temp_file_cli, temp_file_srv])                
+                    time.sleep(t_sleep)
+                    # FIXME Necessário para limpar o console do terminal, caso contrário fica desconfigurado.   
+                    os.system("reset")  # para limpar o terminal
+
+    # Depois que executou todas as repetições para cada cenário, mover arquivo para não sobreescrever na próxima 
+    utils.logger.info(f"Movendo arquivos finais")
+    hora = datetime.now().hour
+    final_file_srv = f"resultados/finais/{data_atual}-{hora}-srv-data.csv"
+    final_file_cli = f"resultados/finais/{data_atual}-{hora}-cli-data.csv"
+    shutil.move(temp_file_cli, final_file_cli)
+    shutil.move(temp_file_srv, final_file_srv)
 

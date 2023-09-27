@@ -59,26 +59,26 @@ def executa_comando(cmd: str, result: CompletedProcess = None, key: str = None):
         raise Exception(error)
 
 # Função para escrever resultados dos comandos no arquivo
-def escreve_resultado(tag: str, resultados: dict):
+def escreve_resultado(tag: str, resultados: dict, arquivos: list):
     """
     Executa a escrita do resultados do cliente e servidor em dois arquivos
 
     Args:
         tag (str): Identificador do experimento
         resultados (dict): Dicionário de objetos (CompletedProcess) com resultados da execução do comando
+        arquivos (list): lista com nome do arquivo do cliente e do servidor
     """
     try:
-        logger.debug(f"Escrevendo resultados nos arquivos")
-        cli_file = f"resultados/cli-data.csv"
-        srv_file = f"resultados/srv-data.csv"
+        logger.debug(f"Escrevendo resultados nos arquivos temporarios")
+        
         res_cli = resultados['cli-tcp'].stdout
         res_srv = resultados['srv-tcp'].stdout
         # FIXME Algumas vezes o resultado do client = "connect failed: Network is unreachable"
         # Verificar como tratar isso.
         logger.debug(f"dados-cliente={res_cli}")
         logger.debug(f"dados-servidor={res_srv}")
-        write_line_in_file(cli_file, f"{tag},{get_last_line(res_cli)}")
-        write_line_in_file(srv_file, f"{tag},{get_last_line(res_srv)}")
+        write_line_in_file(arquivos[0], f"{tag},{get_last_line(res_cli)}")
+        write_line_in_file(arquivos[1], f"{tag},{get_last_line(res_srv)}")
 
     except CalledProcessError as error:
         logger.error(error)
