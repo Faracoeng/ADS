@@ -138,4 +138,8 @@ Agora diminuindo o BER para 1/1000000 a taxa média de transferência em geral a
 ![4](graficos/relatorio-final/grafico-1000000-800m.png)
 
 
-O último cenário do experimento avança com o aumento da Taxa de Transferência Máxima, a Taxa média de transferência reduz. A diferença de desempenho entre os algoritmos segue semelhante, ainda tendo superioridade do `reno`.
+O último cenário do experimento avança com o aumento da Taxa de Transferência em *background*, que consequentemente reduz a Taxa média de transferência. A diferença de desempenho entre os algoritmos segue semelhante, ainda tendo superioridade do `reno`.
+
+Como o valor de bg, conforme aumenta, impacta na taxa de tranferência do *link*, desta forma o primeiro gráfico ilustra o algorítmo de `cubic` como sendo muito superior, pois esta operando em altas taxas, o que faz sentido em relação às suas caracteristicas. Isso porque o valor de bg e de BER são os que menos impactam na taxa Média.
+
+Nos demais cenários, apesar do `reno` se mostrar superior, os desempenhos seguem semelhantes, representando que os algoritmos em termos de eficiência são semelhantes conforme a Taxa Média diminui.
