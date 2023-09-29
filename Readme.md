@@ -99,7 +99,7 @@ fatores['ber'] = ['100000', '1000000']
 fatores['bg'] = ['400m', '800m']
 ```
 
-O exeprimento deve iterar sobre todas as combinações possíveis dos fatores `alg`, `ber` e `bg`. Para cada combinação, ele executará o experimento realizando a comunicação combinando as 6 variações de `fatores` definidas, onde respectivamente representam os algoritmos comparados, a taxa de erro de *bit* e a taxa de transferência máxima desejada (em bits por segundo) durante um teste de largura de banda.
+O exeprimento deve iterar sobre todas as combinações possíveis dos fatores `alg`, `ber` e `bg`. Para cada combinação, ele executará o experimento realizando a comunicação combinando as 6 variações de `fatores` definidas, onde respectivamente representam os algoritmos comparados, a taxa de erro de *bit* e a taxa de transferência em *background* (em bits por segundo) durante um teste de largura de banda.
 
 Para cada exeprimento:
 
@@ -116,9 +116,9 @@ column_names = ['tag','timestamp','ip_fonte','porta_fonte', 'ip_destino', 'porta
 ```
 
 # Conclusões
-Baseado nestes arquivos, gráficos comparativos são gerados para **Análise de Desempenho** de cada experimento, comparando as médias de cada cenário, sendo eles combinados em **(BER x BitRate)**.
+Baseado nestes arquivos, gráficos comparativos são gerados para **Análise de Desempenho** de cada experimento, comparando as médias de cada cenário, sendo eles combinados em **(BER-bg)**.
 
-### Cenário com BER =  100000 e Taxa de Transferência Máxima Desejada [bg] = 400M
+### Cenário com BER =  100000 e Taxa de Transferência em Background [bg] = 400M
 
 ![1](graficos/relatorio-final/grafico-100000-400m.png)
 
@@ -138,4 +138,4 @@ Agora diminuindo o BER para 1/1000000 a taxa média de transferência em geral a
 ![4](graficos/relatorio-final/grafico-1000000-800m.png)
 
 
-O último cenário do experimento avança com o aumento da Taxa de Transferência Máxima, a Taxa média de transferência reduz. A diferença de desempenho entre os algoritmos segue semelhante, ainda tendo superioridade do `reno`
+O último cenário do experimento avança com o aumento da Taxa de Transferência Máxima, a Taxa média de transferência reduz. A diferença de desempenho entre os algoritmos segue semelhante, ainda tendo superioridade do `reno`.
