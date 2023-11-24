@@ -1,60 +1,9 @@
 import heapq
 import random
 import math
-
-
-# Classe geradora de números randômicos
-class LCG:
-    def __init__(self, seed, a, c, m):
-        """
-        Inicializa o gerador LCG com os parâmetros fornecidos.
-
-        Args:
-            seed: Semente inicial para o gerador.
-            a: Coeficiente multiplicativo.
-            c: Coeficiente aditivo.
-            m: Módulo.
-        """
-        self.seed = seed
-        self.a = a
-        self.c = c
-        self.m = m
-        
-    def sample(self):
-        """
-        Amostra um valor da sequência de números pseudoaleatórios.
-
-        Returns:
-            Um número pseudoaleatório.
-        """
-        self.seed = (self.a * self.seed + self.c) % self.m
-        return self.seed / self.m  # Normaliza o valor para estar entre 0 e 1
-
-# Classe para representar o evento
-class Event:    
-    
-    def __init__(self, time, action, event_type):
-        self.time = time
-        self.action = action
-        self.event_type = event_type
-
-    def __lt__(self, other):
-        return self.time < other.time
-
-# Classe para a fila
-class Queue:
-    
-    def __init__(self):
-        self.buffer = []  # Buffer para armazenar os eventos
-
-    def enqueue(self, event):
-        heapq.heappush(self.buffer, event)
-
-    def dequeue(self):
-        return heapq.heappop(self.buffer)
-
-    def is_empty(self):
-        return len(self.buffer) == 0
+from queue_event import Queue
+from event import Event
+from lgc import LCG
 
 class MM1Queue:
     def __init__(self, arrival_rate, service_rate, simulator):
