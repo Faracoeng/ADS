@@ -6,9 +6,10 @@ Este diretório contém um projeto OMNeT++ com a implementação de uma simulaç
 
 Antes de executar este projeto, certifique-se de que você tenha instalado no SO:
 
+- Git
 - [OMNeT++ 6.0](https://doc.omnetpp.org/omnetpp/InstallGuide.pdf)
 
-## Como Usar
+## Como executar o projeto na IDE
 
 1. Faça clone do repositório com comando a seguir:
       
