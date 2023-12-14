@@ -15,7 +15,11 @@ Antes de executar este projeto, certifique-se de que você tenha instalado no SO
    ```bash
    git clone https://github.com/Faracoeng/ADS.git
    ```
-2. Acesse a IDE do OMNeT++ e importe o projeto presente no subdiretório [Rede_Filas_Omnet](./)
+2. Acesse a IDE do OMNeT++ e crie um novo projeto vazio (File >> New >> OMNeT++ Project);
+3. Copie os arquivos do subdiretório [Rede_Filas_Omnet](./) para o diretório do projeto recém criado;
+4. Execute a simulação (Run As >> OMNeT++ Simulation) selecionando um dos arquivos de configuração (`.ini`);
+
+Mais informações acesse [OMNeT++ Technical Articles](https://docs.omnetpp.org/)
 
 # Cenário
 
